@@ -1,5 +1,6 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
+import { LocalStorageService, SessionStorageService } from 'ngx-webstorage';
 import { JsPlumbService } from '../../../js-plumb/js-plumb.service';
 import { JsPlumbEventService } from '../../../js-plumb/js-plumb-event.service';
 
@@ -10,26 +11,51 @@ import { JsPlumbEventService } from '../../../js-plumb/js-plumb-event.service';
 })
 export class SaMapComponent implements AfterViewInit, OnDestroy {
   private jsPlumbInstance;
-  private jsPlumbEventService: JsPlumbEventService;
   private subscription: Subscription;
 
-  constructor(jsPlumbService: JsPlumbService, jsPlumbEventService: JsPlumbEventService) {
+  constructor(jsPlumbService: JsPlumbService, private jsPlumbEventService: JsPlumbEventService) {
     this.jsPlumbInstance = jsPlumbService.getInstance();
-    this.jsPlumbEventService = jsPlumbEventService;
+    //private $localStorage: LocalStorageService, private $sessionStorage: SessionStorageService
   }
 
   ngAfterViewInit(): void {
     this.loadBoxs();
+    this.positionateBox();
 
-    this.subscription = this.jsPlumbEventService.eventManager.subscribe(event => {
-      //console.log(event);
+    this.subscription = this.jsPlumbEventService.getEventListner().subscribe(event => {
       if(event != null && event.eventName != null){
-        console.log("evento: ", event.eventName, event.info.nativeElement.style);
+        this.movedBoxEvent(event);
       }
-    })
+    });
   }
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  private boxPosition = new Array();
+  private positionateBox(){
+    this.boxPosition.forEach((elementPosition) => {
+      //console.log(elementPosition);
+    });
+  }
+
+  private somethingToSave(){
+    //Vedere se uguali
+    if(this.boxPosition.length > 0){
+      return true;
+    }
+  }
+  private save(){
+    console.log(this.boxPosition);
+  }
+
+
+  private movedBoxEvent(event){
+    this.boxPosition.push({
+      id: event.info.nativeElement.id,
+      top: event.info.nativeElement.style.top,
+      left: event.info.nativeElement.style.left
+    });
   }
 
   defaultConnectObjectParam = {

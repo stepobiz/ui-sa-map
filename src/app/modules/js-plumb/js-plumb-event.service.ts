@@ -1,14 +1,21 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class JsPlumbEventService {
-  constructor() { }
+  private eventManager = new BehaviorSubject<any>({});
+  private eventObservable;
 
-  private _eventManager = new BehaviorSubject<any>({});
-  public eventManager = this._eventManager.asObservable();
+  constructor() {
+    this.eventObservable = this.eventManager.asObservable();
+  }
 
-  lauchEvent(event: any) {
-    this._eventManager.next(event);
+  lauchEvent(event: any) :void {
+    this.eventManager.next(event);
+  }
+
+  getEventListner() : Observable<any>{
+    return this.eventObservable;
   }
 }

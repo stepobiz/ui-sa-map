@@ -12,6 +12,7 @@
     "@angular/router": "^8.0.0",
     "core-js": "2",
     "jsplumb": "^2.10.0",
+    "ngx-webstorage": "^4.0.1",
     "rxjs": "^6.5.2",
     "rxjs-compat": "^6.5.2",
     "zone.js": "^0.9.1"
