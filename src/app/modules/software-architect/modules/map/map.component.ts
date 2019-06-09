@@ -1,20 +1,35 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 import { JsPlumbService } from '../../../js-plumb/js-plumb.service';
+import { JsPlumbEventService } from '../../../js-plumb/js-plumb-event.service';
 
 @Component({
   selector: 'sa-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class SaMapComponent implements AfterViewInit {
-  jsPlumbInstance;
+export class SaMapComponent implements AfterViewInit, OnDestroy {
+  private jsPlumbInstance;
+  private jsPlumbEventService: JsPlumbEventService;
+  private subscription: Subscription;
 
-  constructor(jsPlumbService: JsPlumbService) {
+  constructor(jsPlumbService: JsPlumbService, jsPlumbEventService: JsPlumbEventService) {
     this.jsPlumbInstance = jsPlumbService.getInstance();
+    this.jsPlumbEventService = jsPlumbEventService;
   }
 
   ngAfterViewInit(): void {
     this.loadBoxs();
+
+    this.subscription = this.jsPlumbEventService.eventManager.subscribe(event => {
+      //console.log(event);
+      if(event != null && event.eventName != null){
+        console.log("evento: ", event.eventName, event.info.nativeElement.style);
+      }
+    })
+  }
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   defaultConnectObjectParam = {
