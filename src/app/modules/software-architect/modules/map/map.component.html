@@ -2,10 +2,10 @@
 <hr />
 <div class="container">
 	<div *ngFor="let box of boxs">
-		<div *ngIf="isPublisher(box.type)" id="p-{{box.elementInfo.id}}" jsplumb-draggable class="example-box publisher">
+		<div *ngIf="isPublisher(box.type)" id="p-{{box.elementInfo.id}}" [ngStyle]="boxPosition['p-' + box.elementInfo.id]" jsplumb-draggable class="example-box publisher">
 			P| {{ box.elementInfo.name }}
 		</div>
-		<div *ngIf="isSubscriber(box.type)" id="sc-{{box.elementInfo.id}}" jsplumb-draggable>
+		<div *ngIf="isSubscriber(box.type)" id="sc-{{box.elementInfo.id}}" [ngStyle]="boxPosition['sc-' + box.elementInfo.id]" jsplumb-draggable>
 			<div id="s-{{box.elementInfo.id}}" class="example-box subscriber">
 				S| {{ box.elementInfo.name }}
 			</div>

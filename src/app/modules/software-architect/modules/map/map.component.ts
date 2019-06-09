@@ -16,10 +16,9 @@ export class SaMapComponent implements AfterViewInit, OnDestroy {
   constructor(
     jsPlumbService: JsPlumbService,
     private jsPlumbEventService: JsPlumbEventService,
-    private $localStorage: LocalStorageService
+    private localStorage: LocalStorageService
   ) {
     this.jsPlumbInstance = jsPlumbService.getInstance();
-    //, private $sessionStorage: SessionStorageService
   }
 
   ngAfterViewInit(): void {
@@ -36,35 +35,37 @@ export class SaMapComponent implements AfterViewInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  private boxPositionInStorage = new Array();
+  private boxPosition = {};
+
   private positionateBox() {
-    var boxPositionInStorage = this.$localStorage.retrieve('boxPosition');
-    if (boxPositionInStorage != null) {
-      boxPositionInStorage.forEach((elementPosition) => {
-        console.log(elementPosition);
-        this.boxPositionInStorage = boxPositionInStorage;
-      });
+    this.boxPosition = this.getBoxPositionInStorage();
+  }
+  private getBoxPositionInStorage() {
+    var boxPositionInStorage = this.localStorage.retrieve('boxPosition');
+    if (boxPositionInStorage == null) {
+      boxPositionInStorage = {};
     }
+    return boxPositionInStorage;
   }
 
-  private boxPosition = new Array();
+  private changed : boolean = false;
   private somethingToSave() {
-    //Vedere se uguali
-    if (this.boxPositionInStorage.length != this.boxPosition.length) {
+    if(this.changed){
       return true;
     }
   }
   private save() {
-    console.log(this.boxPosition);
+    this.localStorage.store('boxPosition', this.boxPosition);
+    this.changed = false;
   }
 
 
   private movedBoxEvent(event) {
-    this.boxPosition.push({
-      id: event.info.nativeElement.id,
-      top: event.info.nativeElement.style.top,
-      left: event.info.nativeElement.style.left
-    });
+    this.boxPosition[event.info.nativeElement.id] = {
+      'top': event.info.nativeElement.style.top,
+      'left': event.info.nativeElement.style.left
+    };
+    this.changed = true;
   }
 
   defaultConnectObjectParam = {
