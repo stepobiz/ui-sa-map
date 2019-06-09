@@ -13,6 +13,10 @@ export class SaMapComponent implements AfterViewInit {
     this.jsPlumbInstance = jsPlumbService.getInstance();
   }
 
+  ngAfterViewInit(): void {
+    this.loadBoxs();
+  }
+
   defaultConnectObjectParam = {
     source: "",
     target: "",
@@ -22,72 +26,39 @@ export class SaMapComponent implements AfterViewInit {
   };
   PublisherSubscriber = ["Bottom", "Top"];
   ProcessPublisher = ["Right", "Left"];
-  ngAfterViewInit(): void {
-
-
-
-
-    this.defaultConnectObjectParam.source = "a";
-    this.defaultConnectObjectParam.anchors = this.PublisherSubscriber;
-    this.defaultConnectObjectParam.target = "b";
-    this.jsPlumbInstance.connect(this.defaultConnectObjectParam);
-
-    this.defaultConnectObjectParam.source = "c";
-    this.defaultConnectObjectParam.anchors = this.ProcessPublisher;
-    this.defaultConnectObjectParam.target = "d";
-    this.jsPlumbInstance.connect(this.defaultConnectObjectParam);
-    this.defaultConnectObjectParam.target = "e";
-    this.jsPlumbInstance.connect(this.defaultConnectObjectParam);
-
-
-
-    this.esamina();
-  }
-
 
   private boxs = new Array();
-  connections = new Array();
+  private connections = new Array();
 
-  esamina() {
-    this.cacca(this.lotas);
-    setTimeout(() => {
-      this.ciao();
-    }, 0);
-
-  }
-  cacca(elements) {
-    elements.forEach((element) => {
-      this.lota(element);
-    });
-  }
   publisher;
   subscriber;
   processWork;
 
-  ciao() {
-    this.connections.forEach((connection) => {
-      //console.log(connection);
-      this.defaultConnectObjectParam.source = connection.source;
-      this.defaultConnectObjectParam.target = connection.target;
-      this.defaultConnectObjectParam.anchors = connection.type;
-      this.jsPlumbInstance.connect(this.defaultConnectObjectParam);
+  private loadBoxs() {
+    this.elaborateBoxs(this.lotas);
+    setTimeout(() => {
+      this.createConnections();
+    }, 0);
+  }
+  private elaborateBoxs (elements) {
+    elements.forEach((element) => {
+      this.elaborateBox(element);
     });
-
   }
 
-  lota(element) {
+  private elaborateBox(element) {
     if (this.isPublisher(element.type)) {
       this.publisher = element.elementInfo
+      // Push element in box creation Array
       this.boxs.push({
         type: element.type,
         elementInfo: element.elementInfo
       });
     } else if (this.isSubscriber(element.type)) {
       this.subscriber = element.elementInfo;
-
+      // Push element in box creation Array
       this.boxs.push(element);
-
-      //console.log("Collega: " + this.publisher.name + " (p-" + this.publisher.id + ")->" + this.subscriber.name + "(s-" + this.subscriber.id + ")");
+      // Push info in connection creation Array
       this.connections.push({
         type: this.PublisherSubscriber,
         source: "p-" + this.publisher.id,
@@ -97,9 +68,8 @@ export class SaMapComponent implements AfterViewInit {
     } else if (this.isProcessWork(element.type)) {
       this.processWork = element.elementInfo;
 
-      console.log(element);
+      // Push info in connection creation Array
       this.processWork.publishers.forEach((publisher) => {
-        //console.log("Collega: " + this.processWork.processAnagraphicName + " (pw-" + this.processWork.id + ")->" + publisher.name + " (p-" + publisher.id + ")");
         this.connections.push({
           type: this.ProcessPublisher,
           source: "pw-" + this.processWork.id,
@@ -107,10 +77,17 @@ export class SaMapComponent implements AfterViewInit {
         });
       });
     }
-    this.cacca(element.child);
+    this.elaborateBoxs(element.child);
   }
 
-
+  private createConnections() {
+    this.connections.forEach((connection) => {
+      this.defaultConnectObjectParam.source = connection.source;
+      this.defaultConnectObjectParam.target = connection.target;
+      this.defaultConnectObjectParam.anchors = connection.type;
+      this.jsPlumbInstance.connect(this.defaultConnectObjectParam);
+    });
+  }
 
   isPublisher(type) {
     if (type == "PUBLISHER") {
@@ -127,6 +104,7 @@ export class SaMapComponent implements AfterViewInit {
       return true;
     }
   }
+
 
   lotas = [
     {
