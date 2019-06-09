@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NgxWebstorageModule } from 'ngx-webstorage';
 
 import { JsPlumbModule } from '../../../js-plumb/js-plumb.module';
 
@@ -10,7 +11,8 @@ import { SaMapComponent } from './map.component';
     imports: [ 
         CommonModule,
         FormsModule,
-        JsPlumbModule
+        JsPlumbModule,
+        NgxWebstorageModule.forRoot()
      ],
     declarations: [
         SaMapComponent,

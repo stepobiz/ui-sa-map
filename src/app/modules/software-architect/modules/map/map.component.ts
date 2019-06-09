@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { LocalStorageService, SessionStorageService } from 'ngx-webstorage';
+import { LocalStorageService } from 'ngx-webstorage';
 import { JsPlumbService } from '../../../js-plumb/js-plumb.service';
 import { JsPlumbEventService } from '../../../js-plumb/js-plumb-event.service';
 
@@ -13,9 +13,13 @@ export class SaMapComponent implements AfterViewInit, OnDestroy {
   private jsPlumbInstance;
   private subscription: Subscription;
 
-  constructor(jsPlumbService: JsPlumbService, private jsPlumbEventService: JsPlumbEventService) {
+  constructor(
+    jsPlumbService: JsPlumbService,
+    private jsPlumbEventService: JsPlumbEventService,
+    private $localStorage: LocalStorageService
+  ) {
     this.jsPlumbInstance = jsPlumbService.getInstance();
-    //private $localStorage: LocalStorageService, private $sessionStorage: SessionStorageService
+    //, private $sessionStorage: SessionStorageService
   }
 
   ngAfterViewInit(): void {
@@ -23,7 +27,7 @@ export class SaMapComponent implements AfterViewInit, OnDestroy {
     this.positionateBox();
 
     this.subscription = this.jsPlumbEventService.getEventListner().subscribe(event => {
-      if(event != null && event.eventName != null){
+      if (event != null && event.eventName != null) {
         this.movedBoxEvent(event);
       }
     });
@@ -32,25 +36,30 @@ export class SaMapComponent implements AfterViewInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  private boxPosition = new Array();
-  private positionateBox(){
-    this.boxPosition.forEach((elementPosition) => {
-      //console.log(elementPosition);
-    });
+  private boxPositionInStorage = new Array();
+  private positionateBox() {
+    var boxPositionInStorage = this.$localStorage.retrieve('boxPosition');
+    if (boxPositionInStorage != null) {
+      boxPositionInStorage.forEach((elementPosition) => {
+        console.log(elementPosition);
+        this.boxPositionInStorage = boxPositionInStorage;
+      });
+    }
   }
 
-  private somethingToSave(){
+  private boxPosition = new Array();
+  private somethingToSave() {
     //Vedere se uguali
-    if(this.boxPosition.length > 0){
+    if (this.boxPositionInStorage.length != this.boxPosition.length) {
       return true;
     }
   }
-  private save(){
+  private save() {
     console.log(this.boxPosition);
   }
 
 
-  private movedBoxEvent(event){
+  private movedBoxEvent(event) {
     this.boxPosition.push({
       id: event.info.nativeElement.id,
       top: event.info.nativeElement.style.top,
@@ -81,7 +90,7 @@ export class SaMapComponent implements AfterViewInit, OnDestroy {
       this.createConnections();
     }, 0);
   }
-  private elaborateBoxs (elements) {
+  private elaborateBoxs(elements) {
     elements.forEach((element) => {
       this.elaborateBox(element);
     });
