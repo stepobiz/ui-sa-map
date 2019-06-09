@@ -1,0 +1,36 @@
+.container{
+    border: solid 1px #000;
+    width:1600px;
+    height: 750px;
+    margin: 0 auto;
+}
+
+div [jsplumb-draggable] {
+  position: absolute;
+  cursor: move;
+}  
+
+.example-box {
+  width: 200px;
+  height: 25px;
+  border: solid 1px #ddd;
+  text-align: center;
+}
+  
+.publisher {
+
+}
+
+.subscriber {
+  
+}
+
+.process-work {
+
+}
+#a{
+  top: 200px;
+}
+#f{
+  top: 300px;
+}

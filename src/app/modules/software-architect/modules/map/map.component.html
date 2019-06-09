@@ -1,0 +1,24 @@
+<div class="container">
+
+	<div *ngFor="let box of boxs">
+		
+		<div *ngIf="isPublisher(box.type)" id="p-{{box.elementInfo.id}}" jsplumb-draggable class="example-box publisher">
+			{{ box.elementInfo.name }}
+		</div>
+		<div *ngIf="isSubscriber(box.type)" id="s-{{box.elementInfo.id}}" jsplumb-draggable class="example-box subscriber">
+			{{ box.elementInfo.name }}
+		</div>
+		<div *ngIf="isProcessWork(box.type)" id="pw-{{box.elementInfo.id}}" jsplumb-draggable class="example-box process-work">
+			{{ box.elementInfo.processAnagraphicName }}, {{ box.elementInfo.name }}
+		</div>
+
+	</div>
+
+	<div id="a" jsplumb-draggable class="example-box publisher">PUBLISHER1</div>
+	<div id="f" jsplumb-draggable >
+		<div id="b" class="example-box subscriber">SUBSCRIBER</div>
+		<div id="c" class="example-box process-work">PROCESS</div>
+	</div>
+	<div id="d" jsplumb-draggable class="example-box publisher">PUBLISHER2</div>
+	<div id="e" jsplumb-draggable class="example-box publisher">PUBLISHER3</div>
+</div>
